@@ -3,7 +3,8 @@ class SongsController < ApplicationController
 
   # GET /songs
   def index
-    @songs = Song.all
+    # @songs = Song.all
+    @songs = current_user.songs
 
     render json: @songs
   end
@@ -15,7 +16,8 @@ class SongsController < ApplicationController
 
   # POST /songs
   def create
-    @song = Song.new(song_params)
+    # @song = Song.new(song_params)
+    @song = current_user.songs.build(song_params)
 
     if @song.save
       render json: @song, status: :created, location: @song
@@ -26,7 +28,7 @@ class SongsController < ApplicationController
 
   # PATCH/PUT /songs/1
   def update
-    if @song.update(song_params)
+    if @song.update(edit_song_params)
       render json: @song
     else
       render json: @song.errors, status: :unprocessable_entity
@@ -38,14 +40,20 @@ class SongsController < ApplicationController
     @song.destroy
   end
 
-  private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_song
-      @song = Song.find(params[:id])
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_song
+    # @song = Song.find(params[:id])
+    @song = current_user.songs.find(params[:id])
+  end
 
-    # Only allow a trusted parameter "white list" through.
-    def song_params
-      params.require(:song).permit(:song_title, :artist_name, :song_url)
-    end
+  # Only allow a trusted parameter "white list" through.
+  def song_params
+    params.require(:song).permit(:song_title, :artist_name, :song_url)
+  end
+
+  def edit_song_params
+    params.require(:song).permit(:song_title, :artist_name)
+  end
+
+  private :set_song, :song_params, :edit_song_params
 end
