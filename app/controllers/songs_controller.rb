@@ -1,4 +1,4 @@
-class SongsController < ApplicationController
+class SongsController < OpenReadController
   before_action :set_song, only: [:show, :update, :destroy]
 
   # GET /songs
@@ -17,7 +17,10 @@ class SongsController < ApplicationController
   # POST /songs
   def create
     # @song = Song.new(song_params)
+    puts "song_params are: #{song_params}"
+    puts "current_user is: #{current_user}"
     @song = current_user.songs.build(song_params)
+    # @song = Song.build(song_params)
 
     if @song.save
       render json: @song, status: :created, location: @song
